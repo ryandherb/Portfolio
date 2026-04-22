@@ -14,6 +14,8 @@ export default function Terminal() {
     const [history, setHistory] = useState<string[]>([]);
     const [terminalIndex, setTerminalIndex] = useState<number>(0);
 
+    const [directory, setDirectory] = useState<string>("home");
+
     const addHistory = useCallback((message: string) => {
         setHistory((prev) => [...prev, message]);
         setTerminalIndex(terminalIndex + 1);
@@ -91,19 +93,22 @@ export default function Terminal() {
     return (
         <>
             <div className="terminalBorder">
+                <span className='terminalHeader'>
+                    &gt;Ryan Herber's Portfolio
+                </span>
                 <div className='terminalBg'>
                     <div className='terminalText history'>
                         {history.map((value, index) => {
                             return (
                                 <div className='historyEntry' key={index}>
-                                    {'[rherber@portfolio ~]' + value}
+                                    {'[rherber@portfolio '+ directory + ' ~]' + value}
                                 </div>
                             )
                         })}
                     </div>
                     <div className="terminalLine">
                         <span className='terminalText'>
-                            {'[rherber@portfolio ~]'}
+                            {'[rherber@portfolio '+ directory +' ~]'}
                         </span>
                         <input
                             className='terminalText terminalInput'

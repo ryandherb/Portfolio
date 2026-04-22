@@ -23,7 +23,7 @@ body {
   background-size: 100% 8px;
   padding: 20px 10px;
   height: 100%;
-  width:  98%;
+  width: 98%;
 
   display: flex;
   flex-direction: column;
@@ -84,4 +84,50 @@ body {
 
 .history {
   padding: 0px;
+}
+
+.modal {
+  position: fixed;
+  background-color: white;
+}
+
+.modalContent {
+  width: 100vh;
+  aspect-ratio: 4/3;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.modalHeader {
+  display: flex;
+  background-color: #FFFFFF;
+  padding: 3px;
+  border-bottom: 3px solid black;
+  
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalButton {
+  background: #C3C7CB;
+  background: linear-gradient(90deg, rgba(195, 199, 203, 1) 85%, rgba(128, 132, 136, 1) 85%);
+  border-radius: 1px;
+  border-color: #050505;
+  aspect-ratio: 1/1;
+  min-width: 30px;
+
+  font-size: 24px;
+  font-weight: bolder;
+
+  font-family: 'Courier New', Courier, monospace;
+  align-content: center;
+}
+
+.modalH1 {
+  font-weight:900;
+  font-size: 18px;
+}
+
+.docContent {
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
