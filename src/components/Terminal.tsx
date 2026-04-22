@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import '../index.css';
 
 const Commands = {
     CLEAR: 'clear',
     LIST: 'ls',
-    OPEN: 'open', 
+    OPEN: 'open',
     HELP: '--help',
     CONTACT: '--contact'
 } as const
@@ -12,16 +12,18 @@ const Commands = {
 export default function Terminal() {
     const [terminalVal, setTerminalVal] = useState<string>("");
     const [history, setHistory] = useState<string[]>([]);
+    const [terminalIndex, setTerminalIndex] = useState<number>(0);
 
-    const addHistory = (message : string) => {
+    const addHistory = useCallback((message: string) => {
         setHistory((prev) => [...prev, message]);
-    }
+        setTerminalIndex(terminalIndex + 1);
+    }, [terminalIndex]);
 
     const executeCommand = (command: string) => {
-        addHistory(command); 
+        addHistory(command);
         setTerminalVal("");
 
-        switch(command){
+        switch (command) {
             case Commands.CLEAR:
                 setHistory([]);
                 break;
@@ -40,9 +42,21 @@ export default function Terminal() {
         }
     }
 
-    const handleSubmit = (event: { key: string; }) => {
+    const handleKeyPress = (event: { key: string; }) => {
         if (event.key == 'Enter') {
             executeCommand(terminalVal);
+            setTerminalIndex(history.length);
+            console.log(history);
+        } else if (event.key == 'ArrowUp') {
+            if (terminalIndex >= 0) {
+                setTerminalVal(history[terminalIndex]);
+                setTerminalIndex(terminalIndex - 2);
+            }
+        } else if(event.key == 'ArrowDown'){
+            if(terminalIndex < history.length-4){
+                setTerminalVal(history[terminalIndex+4]);
+                setTerminalIndex(terminalIndex+2); 
+            }
         }
     }
 
@@ -71,8 +85,8 @@ export default function Terminal() {
         }
 
         load();
-
-    }, [])
+        setTerminalIndex(0);
+    }, [addHistory])
 
     return (
         <>
@@ -95,7 +109,7 @@ export default function Terminal() {
                             className='terminalText terminalInput'
                             value={terminalVal}
                             onChange={(e) => setTerminalVal(e.target.value)}
-                            onKeyDown={handleSubmit}
+                            onKeyDown={handleKeyPress}
                         />
                     </div>
                 </div>
