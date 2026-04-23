@@ -21,6 +21,7 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
     const [terminalIndex, setTerminalIndex] = useState<number>(0);
 
     const [directory, setDirectory] = useState<string>("home");
+
     const fsRef = useRef<FileSystem>(new FileSystem());
     const fs = fsRef.current;
 
@@ -55,21 +56,29 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
                     }
                     break;
                 case Commands.OPEN:
-                    // open logic here
-                    break;
-                case Commands.CD: {
-                    const res = fs.cd(commandList[1]);
-                    if (!res) {
-                        addHistory("Directory " + commandList[1] + " not found.");
+                    {
+                        const res = fs.fileExists(commandList[1]);
+                        if (!res) {
+                            addHistory("File '" + commandList[1] + "' not found.");
+                        } else {
+                            toggleDocView(res);
+                        }
                         break;
                     }
-                    if (res === "home") {
-                        setDirectory(res);
+                case Commands.CD:
+                    {
+                        const res = fs.cd(commandList[1]);
+                        if (!res) {
+                            addHistory("Directory '" + commandList[1] + "' not found.");
+                            break;
+                        }
+                        if (res === "home") {
+                            setDirectory(res);
+                            break;
+                        }
+                        setDirectory((prev) => prev + res);
                         break;
                     }
-                    setDirectory((prev) => prev + res);
-                    break;
-                }
                 default:
                     addHistory("'" + command + "' is not recognized as a command. Use --help to see a list of commands.");
             }
@@ -84,20 +93,16 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
             setTerminalIndex(history.length);
         } else if (event.key == 'ArrowUp') {
             if (terminalIndex >= 0) {
-                setTerminalVal(history[terminalIndex]);
+                const newTerminalValue = history[terminalIndex].substring(19 + directory.length + 3);
+                setTerminalVal(newTerminalValue);
                 setTerminalIndex(terminalIndex - 2);
             }
         } else if (event.key == 'ArrowDown') {
             if (terminalIndex < history.length - 4) {
-                setTerminalVal(history[terminalIndex + 4]);
+                const newTerminalValue = history[terminalIndex + 4].substring(19 + directory.length + 3);
+                setTerminalVal(newTerminalValue);
                 setTerminalIndex(terminalIndex + 2);
             }
-        } else if (event.key == 'C') {
-            toggleDocView(
-                <>
-                    aaaa
-                </>
-            );
         }
     }
 

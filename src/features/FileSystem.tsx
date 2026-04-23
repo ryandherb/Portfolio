@@ -31,7 +31,7 @@ export default class FileSystem {
 
     dir: Directory;
 
-    constructor(){
+    constructor() {
         this.dir = this.home;
     }
 
@@ -42,12 +42,19 @@ export default class FileSystem {
         }
 
         for (const child of Object.values(this.dir.children)) {
-            if (child.label === file) {
-                if (child.type === 'directory') {
-                    this.dir = child;  
-                    console.log(this.dir);
-                    return file;
-                }
+            if (child.label === file && child.type === 'directory') {
+                this.dir = child;
+                console.log(this.dir);
+                return file;
+            }
+        }
+        return null;
+    }
+
+    fileExists = (file: string): ReactNode | null => {
+        for (const child of Object.values(this.dir.children)) {
+            if (child.label === file && child.type === 'file') {
+                return child?.content; 
             }
         }
         return null;
