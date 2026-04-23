@@ -1,17 +1,32 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import "../index.css"
 import { Windows95Notepad } from "react-old-icons";
 
 interface DocViewProps {
-    toggleDocView: (textElement : ReactNode) => void;
-    textElement :ReactNode;
+    toggleDocView: (textElement: ReactNode) => void;
+    textElement: ReactNode;
 }
 
-export default function DocView({toggleDocView, textElement} : DocViewProps) {
+export default function DocView({ toggleDocView, textElement }: DocViewProps) {
 
     const handleClose = () => {
-        toggleDocView(null); 
+        toggleDocView(null);
     }
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const isExitShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c';
+
+            if (isExitShortcut) {
+                toggleDocView(null);
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown); 
+    }, [toggleDocView]);
+
 
     return (
         <div className="modal">
