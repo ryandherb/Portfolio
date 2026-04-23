@@ -25,9 +25,9 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
     const fs = fsRef.current;
 
     const addHistory = useCallback((message: string) => {
-        setHistory((prev) => [...prev, message]);
+        setHistory((prev) => [...prev, '[rherber@portfolio ' + directory + ' ~]' + message]);
         setTerminalIndex(terminalIndex + 1);
-    }, [terminalIndex]);
+    }, [terminalIndex, directory]);
 
     const executeCommand = (command: string) => {
         addHistory(command);
@@ -140,7 +140,7 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
                         {history.map((value, index) => {
                             return (
                                 <div className='historyEntry' key={index}>
-                                    {'[rherber@portfolio ' + directory + ' ~]' + value}
+                                    {value}
                                 </div>
                             )
                         })}
