@@ -127,7 +127,11 @@ body {
   font-size: 18px;
 }
 
-.docContent {
+.modalText {
   overflow-wrap: break-word;
   white-space: pre-wrap;
+  padding: 8px;
+
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20px;
 }
