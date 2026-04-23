@@ -1,20 +1,28 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import FileSystem from '../features/FileSystem';
 import '../index.css';
 
 const Commands = {
     CLEAR: 'clear',
     LIST: 'ls',
+    CD: 'cd',
     OPEN: 'open',
     HELP: '--help',
     CONTACT: '--contact'
 } as const
 
-export default function Terminal() {
+interface TerminalProps {
+    toggleDocView: (textElement: ReactNode) => void;
+}
+
+export default function Terminal({ toggleDocView }: TerminalProps) {
     const [terminalVal, setTerminalVal] = useState<string>("");
     const [history, setHistory] = useState<string[]>([]);
     const [terminalIndex, setTerminalIndex] = useState<number>(0);
 
     const [directory, setDirectory] = useState<string>("home");
+    const fsRef = useRef<FileSystem>(new FileSystem());
+    const fs = fsRef.current;
 
     const addHistory = useCallback((message: string) => {
         setHistory((prev) => [...prev, message]);
@@ -24,23 +32,49 @@ export default function Terminal() {
     const executeCommand = (command: string) => {
         addHistory(command);
         setTerminalVal("");
+        const commandList = command.split(" ");
 
-        switch (command) {
-            case Commands.CLEAR:
-                setHistory([]);
-                break;
-            case Commands.CONTACT:
-                addHistory("Email me at: ryandherber@gmail.com");
-                break;
-            case Commands.HELP:
-                addHistory("List of commands:")
-                addHistory("'clear' - Clears the terminal.")
-                addHistory("'ls' - Lists available directories.")
-                addHistory("'open [file]' - Open a file in this directory.")
-                addHistory("'--contact' - Find out how to contact me.")
-                break;
-            default:
-                addHistory("'" + command + "' is not recognized as a command. Use --help to see a list of commands.");
+        try {
+            switch (commandList[0]) {
+                case Commands.CLEAR:
+                    setHistory([]);
+                    break;
+                case Commands.CONTACT:
+                    addHistory("Email me at: ryandherber@gmail.com");
+                    break;
+                case Commands.HELP:
+                    addHistory("List of commands:")
+                    addHistory("'clear' - Clears the terminal.")
+                    addHistory("'ls' - Lists available directories.")
+                    addHistory("'open [file]' - Open a file in this directory.")
+                    addHistory("'--contact' - Find out how to contact me.")
+                    break;
+                case Commands.LIST:
+                    for (const child of Object.values(fs.dir.children)) {
+                        addHistory(child.label);
+                    }
+                    break;
+                case Commands.OPEN:
+                    // open logic here
+                    break;
+                case Commands.CD: {
+                    const res = fs.cd(commandList[1]);
+                    if (!res) {
+                        addHistory("Directory " + commandList[1] + " not found.");
+                        break;
+                    }
+                    if (res === "home") {
+                        setDirectory(res);
+                        break;
+                    }
+                    setDirectory((prev) => prev + res);
+                    break;
+                }
+                default:
+                    addHistory("'" + command + "' is not recognized as a command. Use --help to see a list of commands.");
+            }
+        } catch (err) {
+            console.error(err);
         }
     }
 
@@ -48,17 +82,22 @@ export default function Terminal() {
         if (event.key == 'Enter') {
             executeCommand(terminalVal);
             setTerminalIndex(history.length);
-            console.log(history);
         } else if (event.key == 'ArrowUp') {
             if (terminalIndex >= 0) {
                 setTerminalVal(history[terminalIndex]);
                 setTerminalIndex(terminalIndex - 2);
             }
-        } else if(event.key == 'ArrowDown'){
-            if(terminalIndex < history.length-4){
-                setTerminalVal(history[terminalIndex+4]);
-                setTerminalIndex(terminalIndex+2); 
+        } else if (event.key == 'ArrowDown') {
+            if (terminalIndex < history.length - 4) {
+                setTerminalVal(history[terminalIndex + 4]);
+                setTerminalIndex(terminalIndex + 2);
             }
+        } else if (event.key == 'C') {
+            toggleDocView(
+                <>
+                    aaaa
+                </>
+            );
         }
     }
 
@@ -101,14 +140,14 @@ export default function Terminal() {
                         {history.map((value, index) => {
                             return (
                                 <div className='historyEntry' key={index}>
-                                    {'[rherber@portfolio '+ directory + ' ~]' + value}
+                                    {'[rherber@portfolio ' + directory + ' ~]' + value}
                                 </div>
                             )
                         })}
                     </div>
                     <div className="terminalLine">
                         <span className='terminalText'>
-                            {'[rherber@portfolio '+ directory +' ~]'}
+                            {'[rherber@portfolio ' + directory + ' ~]'}
                         </span>
                         <input
                             className='terminalText terminalInput'
