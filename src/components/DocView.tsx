@@ -1,7 +1,17 @@
+import type { ReactNode } from "react";
 import "../index.css"
 import { Windows95Notepad } from "react-old-icons";
 
-export default function DocView() {
+interface DocViewProps {
+    toggleDocView: (textElement : ReactNode) => void;
+    textElement :ReactNode;
+}
+
+export default function DocView({toggleDocView, textElement} : DocViewProps) {
+
+    const handleClose = () => {
+        toggleDocView(null); 
+    }
 
     return (
         <div className="modal">
@@ -27,13 +37,13 @@ export default function DocView() {
                         padding: '3px',
 
                     }}>
-                        <button className="modalButton">
+                        <button className="modalButton" onClick={handleClose}>
                             X
                         </button>
                     </div>
                 </span>
-                <div className="docContent">
-                    This is the content of the document. This content would be displayed in the document. There wolud be cool formatting stuff with italics and whatnot. The main goal would be for this to be readable, as well as fitting the theme of the webpage.
+                <div className="modalText">
+                    {textElement}
                 </div>
             </div >
         </div >
