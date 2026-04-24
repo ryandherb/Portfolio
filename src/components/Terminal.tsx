@@ -92,7 +92,7 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
             executeCommand(terminalVal);
             setTerminalIndex(history.length);
         } else if (event.key == 'ArrowUp') {
-            if (terminalIndex >= 0) {
+            if (terminalIndex >= 0 && history.length > 0) {
                 const newTerminalValue = history[terminalIndex].substring(19 + directory.length + 3);
                 setTerminalVal(newTerminalValue);
                 setTerminalIndex(terminalIndex - 2);
