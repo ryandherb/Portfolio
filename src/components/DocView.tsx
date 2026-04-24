@@ -5,9 +5,10 @@ import { Windows95Notepad } from "react-old-icons";
 interface DocViewProps {
     toggleDocView: (textElement: ReactNode) => void;
     textElement: ReactNode;
+    docTitle: string;
 }
 
-export default function DocView({ toggleDocView, textElement }: DocViewProps) {
+export default function DocView({ toggleDocView, textElement, docTitle }: DocViewProps) {
 
     const handleClose = () => {
         toggleDocView(null);
@@ -43,7 +44,7 @@ export default function DocView({ toggleDocView, textElement }: DocViewProps) {
                         </div>
                     </div>
                     <div className="docName modalH1">
-                        Viewing Document: PLACEHOLDER
+                        Viewing Document: {docTitle}
                     </div>
                     <div style={{
                         borderWidth: '0px 0px 0px 3px',

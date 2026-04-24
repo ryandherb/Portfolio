@@ -12,7 +12,7 @@ const Commands = {
 } as const
 
 interface TerminalProps {
-    toggleDocView: (textElement: ReactNode) => void;
+    toggleDocView: (textElement: ReactNode, textTitle: string) => void;
 }
 
 export default function Terminal({ toggleDocView }: TerminalProps) {
@@ -61,7 +61,7 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
                         if (!res) {
                             addHistory("File '" + commandList[1] + "' not found.");
                         } else {
-                            toggleDocView(res);
+                            toggleDocView(res.content, res.label);
                         }
                         break;
                     }

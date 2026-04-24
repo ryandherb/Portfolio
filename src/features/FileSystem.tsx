@@ -51,10 +51,10 @@ export default class FileSystem {
         return null;
     }
 
-    fileExists = (file: string): ReactNode | null => {
+    fileExists = (file: string): File | null => {
         for (const child of Object.values(this.dir.children)) {
             if (child.label === file && child.type === 'file') {
-                return child?.content; 
+                return child; 
             }
         }
         return null;
