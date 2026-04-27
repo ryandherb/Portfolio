@@ -80,6 +80,7 @@ body {
   margin: 0;
   border: none;
   outline: none;
+  caret-animation: manual;
 }
 
 .history {
