@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
-import * as Elements from "../constants/DocElements"
+
+import Resume from '../documents/Newresume.pdf'
+
 
 type FileSystemNode = File | Directory;
 
 interface File {
     type: 'file';
     label: string;
-    content: ReactNode
+    content: string;
 }
 
 interface Directory {
@@ -20,7 +22,7 @@ export default class FileSystem {
         type: 'directory',
         label: 'home',
         children: [
-            { type: 'file', label: 'resume.txt', content: Elements.resumeText },
+            { type: 'file', label: 'resume.txt', content: Resume },
             {
                 type: 'directory', label: '/projects', children: [
 
@@ -56,6 +58,15 @@ export default class FileSystem {
             if (child.label === file && child.type === 'file') {
                 return child; 
             }
+        }
+        return null;
+    }
+
+    open = (file: string): Window | null => {
+        const target = this.fileExists(file); 
+
+        if(target){
+            return window.open(target.content)
         }
         return null;
     }

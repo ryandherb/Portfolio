@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState} from 'react';
 import FileSystem from '../features/FileSystem';
 import '../index.css';
 
@@ -8,14 +8,11 @@ const Commands = {
     CD: 'cd',
     OPEN: 'open',
     HELP: '--help',
-    CONTACT: '--contact'
+    CONTACT: '--contact',
+    EXIT: 'exit'
 } as const
 
-interface TerminalProps {
-    toggleDocView: (textElement: ReactNode, textTitle: string) => void;
-}
-
-export default function Terminal({ toggleDocView }: TerminalProps) {
+export default function Terminal() {
     const [terminalVal, setTerminalVal] = useState<string>("");
     const [history, setHistory] = useState<string[]>([]);
     const [terminalIndex, setTerminalIndex] = useState<number>(0);
@@ -56,15 +53,10 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
                     }
                     break;
                 case Commands.OPEN:
-                    {
-                        const res = fs.fileExists(commandList[1]);
-                        if (!res) {
-                            addHistory("File '" + commandList[1] + "' not found.");
-                        } else {
-                            toggleDocView(res.content, res.label);
+                        if(!fs.open(commandList[1])){
+                            addHistory("File '" + commandList[1] + "' not found.")
                         }
                         break;
-                    }
                 case Commands.CD:
                     {
                         const res = fs.cd(commandList[1]);
@@ -77,6 +69,10 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
                             break;
                         }
                         setDirectory((prev) => prev + res);
+                        break;
+                    }
+                case Commands.EXIT:
+                    {
                         break;
                     }
                 default:
@@ -102,6 +98,8 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
                 const newTerminalValue = history[terminalIndex + 4].substring(19 + directory.length + 3);
                 setTerminalVal(newTerminalValue);
                 setTerminalIndex(terminalIndex + 2);
+            } else {
+                setTerminalVal("");
             }
         }
     }
@@ -125,7 +123,7 @@ export default function Terminal({ toggleDocView }: TerminalProps) {
         const load = async () => {
             for (const message of loadMessages) {
                 addHistory(message);
-                await sleep(1);
+                await sleep(2000);
             }
             setHistory([]);
         }
