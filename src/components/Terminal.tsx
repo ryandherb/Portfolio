@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import FileSystem from '../features/FileSystem';
 import '../index.css';
+import { useNavigate } from 'react-router-dom';
 
 const Commands = {
     CLEAR: 'clear',
@@ -21,6 +22,8 @@ export default function Terminal() {
 
     const fsRef = useRef<FileSystem>(new FileSystem());
     const fs = fsRef.current;
+
+    const navigate = useNavigate();
 
     const addHistory = useCallback((message: string) => {
         setHistory((prev) => [...prev, '[rherber@portfolio ' + directory + ' ~]' + message]);
@@ -52,11 +55,18 @@ export default function Terminal() {
                         addHistory(child.label);
                     }
                     break;
-                case Commands.OPEN:
-                        if(!fs.open(commandList[1])){
-                            addHistory("File '" + commandList[1] + "' not found.")
-                        }
-                        break;
+                case Commands.OPEN: {
+                    const res  = fs.open(commandList[1]);
+
+                    if(!res){
+                        addHistory("File '" + commandList[1] + "' not found.");
+                    } else if(typeof res != 'boolean'){
+                        console.log("ReactNode opened: " + res)
+                        navigate("/docView", {state: {title: res.title, content: res.content}});
+                    }
+
+                    break;
+                }
                 case Commands.CD:
                     {
                         const res = fs.cd(commandList[1]);
@@ -123,7 +133,7 @@ export default function Terminal() {
         const load = async () => {
             for (const message of loadMessages) {
                 addHistory(message);
-                await sleep(2000);
+                await sleep(1);
             }
             setHistory([]);
         }
@@ -157,6 +167,7 @@ export default function Terminal() {
                             value={terminalVal}
                             onChange={(e) => setTerminalVal(e.target.value)}
                             onKeyDown={handleKeyPress}
+                            autoFocus
                         />
                     </div>
                 </div>

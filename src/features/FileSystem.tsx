@@ -1,18 +1,23 @@
-import type { ReactNode } from "react";
-
 import Resume from '../documents/Newresume.pdf'
 
 
 type FileSystemNode = File | Directory;
 
+interface FileContents {
+    title: string
+    content: string
+}
+
 interface File {
     type: 'file';
     label: string;
-    content: string;
+    href?: string;
+    content?: FileContents;
+    contentType: string;
 }
 
 interface Directory {
-    type: 'directory',
+    type: 'directory';
     label: string;
     children: FileSystemNode[];
 }
@@ -22,7 +27,8 @@ export default class FileSystem {
         type: 'directory',
         label: 'home',
         children: [
-            { type: 'file', label: 'resume.txt', content: Resume },
+            { type: 'file', label: 'resume.txt', href: Resume, contentType: 'external' },
+            { type: 'file', label: 'test.txt', content: {title: "Test", content: "String"}, contentType: 'native'},
             {
                 type: 'directory', label: '/projects', children: [
 
@@ -56,18 +62,23 @@ export default class FileSystem {
     fileExists = (file: string): File | null => {
         for (const child of Object.values(this.dir.children)) {
             if (child.label === file && child.type === 'file') {
-                return child; 
+                return child;
             }
         }
         return null;
     }
 
-    open = (file: string): Window | null => {
-        const target = this.fileExists(file); 
+    open = (file: string): FileContents | boolean => {
+        const target = this.fileExists(file);
 
-        if(target){
-            return window.open(target.content)
+        if (target) {
+            if (target.contentType === 'external' ) {
+                window.open(target.href);
+                return true;
+            } else {
+                return target.content ? target.content : false;
+            }
         }
-        return null;
+        return false;
     }
 }
