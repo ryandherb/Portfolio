@@ -1,11 +1,11 @@
 import Resume from '../documents/Newresume.pdf'
-
+import { test } from './Text';
 
 type FileSystemNode = File | Directory;
 
-interface FileContents {
-    title: string
-    content: string
+export interface FileContents {
+    title: string;
+    content: string;
 }
 
 interface File {
@@ -28,7 +28,7 @@ export default class FileSystem {
         label: 'home',
         children: [
             { type: 'file', label: 'resume.txt', href: Resume, contentType: 'external' },
-            { type: 'file', label: 'test.txt', content: {title: "Test", content: "String"}, contentType: 'native'},
+            { type: 'file', label: 'test.txt', content: test, contentType: 'native'},
             {
                 type: 'directory', label: '/projects', children: [
 
