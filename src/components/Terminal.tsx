@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import FileSystem from '../features/FileSystem';
+import FileSystem from '../features/FileSystem.ts';
 import '../index.css';
 import { useNavigate } from 'react-router-dom';
 
