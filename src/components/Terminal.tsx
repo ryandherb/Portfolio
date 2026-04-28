@@ -13,7 +13,11 @@ const Commands = {
     EXIT: 'exit'
 } as const
 
-export default function Terminal() {
+type TerminalProps = {
+    hasLoaded: boolean;
+    setHasLoaded: (val: boolean) => void;
+}
+export default function Terminal({ hasLoaded, setHasLoaded }: TerminalProps) {
     const [terminalVal, setTerminalVal] = useState<string>("");
     const [history, setHistory] = useState<string[]>([]);
     const [terminalIndex, setTerminalIndex] = useState<number>(0);
@@ -56,13 +60,13 @@ export default function Terminal() {
                     }
                     break;
                 case Commands.OPEN: {
-                    const res  = fs.open(commandList[1]);
+                    const res = fs.open(commandList[1]);
 
-                    if(!res){
+                    if (!res) {
                         addHistory("File '" + commandList[1] + "' not found.");
-                    } else if(typeof res != 'boolean'){
+                    } else if (typeof res != 'boolean') {
                         console.log("ReactNode opened: " + res)
-                        navigate("/docView", {state: {title: res.title, content: res.content}});
+                        navigate("/docView", { state: { title: res.title, content: res.content } });
                     }
 
                     break;
@@ -117,36 +121,38 @@ export default function Terminal() {
     const hasRun = useRef(false);
 
     useEffect(() => {
-        const loadMessages = [
-            "Initializing hands-on experience...",
-            "Fetching programming capabilities...",
-            "Loading personal projects...",
-            "Hint: Try --help for commands",
-            "Entering live environment..."
-        ]
-        if (hasRun.current) return;
-        hasRun.current = true;
+        if (!hasLoaded) {
+            const loadMessages = [
+                "Initializing hands-on experience...",
+                "Fetching programming capabilities...",
+                "Loading personal projects...",
+                "Hint: Try --help for commands",
+                "Entering live environment..."
+            ]
+            if (hasRun.current) return;
+            hasRun.current = true;
 
-        const sleep = (ms: number) =>
-            new Promise((resolve) => setTimeout(resolve, ms));
+            const sleep = (ms: number) =>
+                new Promise((resolve) => setTimeout(resolve, ms));
 
-        const load = async () => {
-            for (const message of loadMessages) {
-                addHistory(message);
-                await sleep(1);
+            const load = async () => {
+                for (const message of loadMessages) {
+                    addHistory(message);
+                    await sleep(100);
+                }
+                setHistory([]);
             }
-            setHistory([]);
+            load();
+            setHasLoaded(true);
         }
-
-        load();
         setTerminalIndex(0);
-    }, [addHistory])
+    }, [addHistory, hasLoaded, setHasLoaded])
 
     return (
         <>
             <div className="terminalBorder">
-                <span className='terminalHeader'>
-                    &gt;Ryan Herber's Portfolio
+                <span className='terminalFringe'>
+                    &gt;rherb_portfolio.sh
                 </span>
                 <div className='terminalBg'>
                     <div className='terminalText history'>
