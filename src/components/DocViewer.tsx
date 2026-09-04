@@ -20,7 +20,7 @@ export default function DocViewer() {
     }, [navigate]);
 
     return (
-        <div className="terminalBorder">
+        <div className="terminalBorder docText">
             <div className="terminalFringe">
                 &gt;rherb_portfolio.sh
             </div>
