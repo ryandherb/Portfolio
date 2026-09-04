@@ -55,6 +55,7 @@ body {
   color: #1FC742;
 
   font-family: 'Courier New', monospace;
+  
 
   text-shadow:
     0 0 7px #025B18,
@@ -95,4 +96,8 @@ body {
 .terminalFringe {
   font-size: 20px;
   font-family: 'Courier New', monospace;
+}
+
+.docText {
+  white-space: pre-wrap;
 }
