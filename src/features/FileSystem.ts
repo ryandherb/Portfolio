@@ -1,4 +1,4 @@
-import Resume from '../documents/Newresume.pdf'
+import Resume from '../documents/resume824.pdf'
 import { test } from './Text';
 
 type FileSystemNode = File | Directory;
@@ -50,10 +50,10 @@ export default class FileSystem {
         }
 
         for (const child of Object.values(this.dir.children)) {
-            if (child.label === file && child.type === 'directory') {
+            if ((child.label === file || child.label === '/' + file) && child.type === 'directory') {
                 this.dir = child;
                 console.log(this.dir);
-                return file;
+                return child.label === file ? file : '/' + file;
             }
         }
         return null;
@@ -66,6 +66,15 @@ export default class FileSystem {
             }
         }
         return null;
+    }
+
+    dirExists = (dir: string): Directory | null => {
+        for(const child of Object.values(this.dir.children)){
+            if((child.label === dir || child.label === '/' + dir) && child.type === 'directory'){
+                return child;
+            }
+        }
+        return null; 
     }
 
     open = (file: string): FileContents | boolean => {

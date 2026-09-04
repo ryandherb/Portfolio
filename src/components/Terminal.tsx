@@ -55,6 +55,19 @@ export default function Terminal({ hasLoaded, setHasLoaded }: TerminalProps) {
                     addHistory("'--contact' - Find out how to contact me.")
                     break;
                 case Commands.LIST:
+                    if(commandList[1]){
+                        const res = fs.dirExists(commandList[1]);
+                        console.log(res);
+                        if(res){
+                            for(const child of Object.values(res.children)){
+                                addHistory(child.label);
+                            }
+                        } else {
+                            addHistory("Folder '" + commandList[1] + "' not found.");
+                        }
+                        break;
+                    }
+
                     for (const child of Object.values(fs.dir.children)) {
                         addHistory(child.label);
                     }
@@ -138,7 +151,7 @@ export default function Terminal({ hasLoaded, setHasLoaded }: TerminalProps) {
             const load = async () => {
                 for (const message of loadMessages) {
                     addHistory(message);
-                    await sleep(100);
+                    await sleep(1);
                 }
                 setHistory([]);
             }
