@@ -1,0 +1,332 @@
+:root {
+  --green: #1FC742;
+  --green-bright: #7CFF9A;
+  --green-dim: #138A2D;
+  --amber: #E8B33A;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  place-items: center;
+  background-size: cover;
+  background-position: center;
+
+  background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(10, 10, 10, 1) 100%);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.terminalBorder {
+  background-color: var(--green);
+  padding: 2px;
+  width: min(95vw, 1100px);
+  aspect-ratio: 4 / 3;
+  max-height: 94vh;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scanlines live on their own layer behind the text and move with transform,
+   so the glowing text never has to repaint while they scroll. */
+.screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  isolation: isolate;
+  overflow: hidden;
+  background: #000;
+}
+
+.screen::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -10px 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(to top, #000000, #000000, #222222, #222222);
+  background-size: 100% 8px;
+  will-change: transform;
+}
+
+@media screen {
+  .screen::before {
+    animation: scanlines infinite 10s linear;
+  }
+}
+
+@keyframes scanlines {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-10px);
+  }
+}
+
+.terminalBg {
+  padding: 20px 10px;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  overflow-y: auto;
+  scrollbar-color: var(--green-dim) transparent;
+}
+
+.terminalText {
+  font-size: clamp(15px, 2.2vw, 24px);
+  border: none;
+  background-color: transparent;
+  color: var(--green);
+
+  font-family: 'Courier New', monospace;
+
+
+  text-shadow:
+    0 0 7px #025B18,
+    0 0 10px #025B18,
+    0 0 21px #025B18,
+    0 0 42px #023612,
+    0 0 82px #023612,
+    0 0 92px #023612,
+    0 0 102px #023612,
+    0 0 151px #023612;
+}
+
+.terminalLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.terminalInput {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  caret-animation: manual;
+  caret-color: var(--green);
+}
+
+.history {
+  padding: 0px;
+}
+
+.historyEntry {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminalTitle {
+  font-size: clamp(28px, 4.4vw, 48px);
+  padding-bottom: 12px;
+}
+
+.terminalFringe {
+  font-size: clamp(14px, 1.8vw, 20px);
+  font-family: 'Courier New', monospace;
+}
+
+.docText {
+  white-space: pre-wrap;
+}
+
+/* ── Output tones ───────────────────────────────────────── */
+
+.prompt { color: var(--green); }
+.dim { opacity: 0.6; }
+.accent { color: var(--green-bright); }
+.error { color: var(--amber); }
+
+/* ── Clickable output ───────────────────────────────────── */
+
+.termLink {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-shadow: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
+}
+
+.termLink:hover,
+.termLink:focus-visible {
+  color: var(--green-bright);
+  text-decoration: underline solid;
+  outline: none;
+}
+
+.termAnchor {
+  color: var(--green-bright);
+  text-underline-offset: 4px;
+}
+
+.lsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2.5ch;
+}
+
+.dir {
+  color: var(--green-bright);
+  font-weight: bold;
+}
+
+/* ── neofetch ───────────────────────────────────────────── */
+
+.neofetch {
+  display: flex;
+  gap: 3ch;
+  align-items: flex-start;
+  padding-top: 4px;
+}
+
+.neofetchArt {
+  margin: 0;
+  font: inherit;
+  color: var(--green-bright);
+}
+
+/* ── Man pages ──────────────────────────────────────────── */
+
+.manSection {
+  font-weight: bold;
+  color: var(--green-bright);
+  margin-top: 14px;
+}
+
+.manBody {
+  padding-left: 4ch;
+}
+
+/* ── Fringe quick bar ───────────────────────────────────── */
+
+.quickBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5ch;
+  align-items: center;
+}
+
+.quickBar .termLink {
+  text-decoration: none;
+  text-shadow: none;
+}
+
+.quickBar .termLink:hover,
+.quickBar .termLink:focus-visible {
+  color: #fff;
+}
+
+.terminalFringe .termLink {
+  text-shadow: none;
+}
+
+/* ── CRT on/off ─────────────────────────────────────────── */
+
+.crtOn {
+  animation: crtOn 0.6s ease-out;
+}
+
+@keyframes crtOn {
+  0%   { transform: scale(1, 0.004); filter: brightness(4); opacity: 0.4; }
+  50%  { transform: scale(1, 0.004); filter: brightness(4); opacity: 1; }
+  100% { transform: scale(1, 1); filter: brightness(1); }
+}
+
+.crtOff {
+  animation: crtOff 0.5s ease-in forwards;
+}
+
+@keyframes crtOff {
+  0%   { transform: scale(1, 1); filter: brightness(1); }
+  60%  { transform: scale(1, 0.004); filter: brightness(4); }
+  100% { transform: scale(0, 0.004); filter: brightness(6); opacity: 0; }
+}
+
+.rebootHint {
+  position: fixed;
+  bottom: 30vh;
+  left: 0;
+  right: 0;
+  text-align: center;
+  opacity: 0.6;
+}
+
+.bootSkip {
+  margin-top: auto;
+}
+
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ── Small screens ──────────────────────────────────────── */
+
+@media (max-width: 700px) {
+  body {
+    height: 100dvh;
+    align-items: stretch;
+  }
+
+  #root {
+    width: 100%;
+  }
+
+  .terminalBorder {
+    width: 100vw;
+    height: 100dvh;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+
+  .terminalLine {
+    white-space: normal;
+  }
+
+  .neofetch {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* ── Respect reduced motion ─────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .screen::before,
+  .crtOn,
+  .blink {
+    animation: none;
+  }
+
+  .crtOff {
+    animation: none;
+    opacity: 0;
+  }
+}
