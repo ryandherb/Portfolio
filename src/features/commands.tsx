@@ -31,6 +31,8 @@ export interface Command {
 const joinPath = (base: string, label: string) =>
     base === '' || base === '.' ? label : base.replace(/\/$/, '') + '/' + label;
 
+const shade = (n: number) => n === 0 ? '·' : n > 3 ? '░' : n < 6 ? '▒' : n < 10 ? '▓' : '█';
+
 function treeLines(dir: DirNode, prefix = ''): string[] {
     const visible = dir.children.filter((c) => !c.hidden);
     return visible.flatMap((child, i) => {
@@ -204,6 +206,27 @@ export const commands: Command[] = [
             ctx.print('Access granted. Excellent decision. Here\'s how to reach me:', 'accent');
             ctx.print(<Contact />);
         },
+    },
+    {
+        name: 'gh',
+        aliases: ['github'],
+        description: 'Check out the lawn',
+        run: async (_args, ctx) => {
+            ctx.print('Mowing the lawn...', 'dim');
+            let cal;
+            try {
+                const res = await fetch('/api/contributions');
+                cal = await res.json();
+                if (!res.ok || !cal.weeks) throw new Error(cal.error ?? `HTTP ${res.status}`);
+            } catch (e) {
+                return ctx.print(`gh: couldn't reach GitHub (${(e as Error).message})`, 'error');
+            }
+            const rows = Array.from({ length: 7 }, (_, d) =>
+                cal.weeks.map((w: any) => shade(w.contributionDays[d]?.contributionCount ?? 0)).join(''));
+
+            ctx.print(rows.join('\n'));
+            ctx.print(`${cal.totalContributions} contributions in the last year`, 'accent'); 
+        }
     },
     {
         name: 'clear',
