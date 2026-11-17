@@ -225,7 +225,7 @@ export const commands: Command[] = [
                 cal.weeks.map((w: any) => shade(w.contributionDays[d]?.contributionCount ?? 0)).join(''));
 
             ctx.print(rows.join('\n'));
-            ctx.print(`${cal.totalContributions} contributions in the last year`, 'accent'); 
+            ctx.print(`${cal.totalContributions} contributions in the last year`, 'accent');
         }
     },
     {
@@ -258,17 +258,21 @@ export const commands: Command[] = [
     },
     {
         name: 'vim',
-        aliases: ['vi', 'nano', 'emacs'],
         hidden: true,
         description: '',
-        run: (_a, ctx) => ctx.print("You're in the editor now. Good luck getting out. (hint: :q)", 'dim'),
+        run: (args, ctx) => {
+            if (args.join(' ') !== '42') {
+                ctx.print("Command 'vim' not found. Did you mean 'emacs'?", 'error');
+            } else {
+                ctx.print("What is the meaning of life, the universe and everything? 42. Douglas Adams, the only person who knew what this question really was about is now dead, unfortunately. So now you might wonder what the meaning of death is...");
+            }
+        },
     },
     {
-        name: ':q',
-        aliases: [':q!', ':wq', ':x'],
+        name: 'emacs',
         hidden: true,
         description: '',
-        run: (_a, ctx) => ctx.print('You escaped vim. Most people never make it this far.', 'accent'),
+        run: (_a, ctx) => ctx.print("Command 'emacs' not found. Did you mean 'vim'?", 'error')
     },
 ];
 
